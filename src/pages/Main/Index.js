@@ -4,7 +4,7 @@ import { Marker, Callout } from 'react-native-maps';
 
 import { Map, ImageAvatar, CalloutView, DevName, DevBio, DevTechs  } from './styles';
 
-export default function Main() {
+export default function Main({ navigation }) {
   const [currentRegion, setCurrentRegion] = useState(null);
 
   useEffect(() => {
@@ -37,7 +37,9 @@ export default function Main() {
     <Map initialRegion={currentRegion}>
       <Marker coordinate={{ latitude: -21.2232772, longitude: -47.8312213 }}>
         <ImageAvatar source={{ uri: 'https://avatars2.githubusercontent.com/u/55964826?s=460&v=4' }}/>
-        <Callout>
+        <Callout onPress={() => {
+          navigation.navigate('Profile', { github_username: 'CaioYoshida' });
+        }}>
           <CalloutView>
             <DevName>Caio Yoshida</DevName>
             <DevBio>I'm a full-stack developer focused in JS. Always studying to increase my programming skills and very excited about new challenges</DevBio>
