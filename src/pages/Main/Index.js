@@ -67,6 +67,7 @@ export default function Main({ navigation }) {
           placeholderTextColor="#999"
           autoCapitalize="words"
           autoCorrect={false}
+          style={{ elevation: 4 }}
         />
 
         <SearchButton onPress={() => {}}>
