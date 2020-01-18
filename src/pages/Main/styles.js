@@ -32,4 +32,31 @@ export const DevTechs = styled.Text`
   margin-top: 5px;
 `;
 
+export const SearchForm = styled.View`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 5;
+  flex-direction: row;
+`;
 
+export const TechsInput = styled.TextInput`
+  flex: 1;
+  height: 50px;
+  background-color: #fff;
+  color: #333;
+  border-radius: 25px;
+  padding: 0px 20px;
+  font-size: 16px;
+`;
+
+export const SearchButton = styled.TouchableOpacity`
+  width: 50px;
+  height: 50px;
+  background-color: #8E4DFF;
+  border-radius: 25px;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15px; 
+`;
