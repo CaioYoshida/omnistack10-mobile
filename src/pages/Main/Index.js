@@ -3,6 +3,8 @@ import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location'
 import { Marker, Callout } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import api from '../../services/api';
+
 import { 
   Map, 
   ImageAvatar, 
@@ -16,7 +18,9 @@ import {
 } from './styles';
 
 export default function Main({ navigation }) {
+  const [devs, setDevs] = useState([]);
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [techs, setTechs] = useState('');
 
   useEffect(() => {
     async function loadInitialPosition() {
@@ -40,26 +44,60 @@ export default function Main({ navigation }) {
     loadInitialPosition();
   }, [])
 
+  async function loadDevs() {
+    console.log('entrou loadDevs');
+
+    const { latitude, longitude } = currentRegion;
+
+    const response = await api.get('search', {
+      params: {
+        latitude: latitude,
+        longitude: longitude,
+        techs: 'ReactJS'
+      }
+    })
+
+    console.log(response.data);
+
+    setDevs(response.data)
+  }
+
+  async function handleRegionChanged(region) {
+  
+    setCurrentRegion(region);
+  }
+
   if(!currentRegion) {
     return null;
   }
 
   return (
     <>
-      <Map initialRegion={currentRegion}>
-        <Marker coordinate={{ latitude: -21.2232772, longitude: -47.8312213 }}>
-          <ImageAvatar source={{ uri: 'https://avatars2.githubusercontent.com/u/55964826?s=460&v=4' }}/>
-          
-          <Callout onPress={() => {
-            navigation.navigate('Profile', { github_username: 'CaioYoshida' });
-          }}>
-            <CalloutView>
-              <DevName>Caio Yoshida</DevName>
-              <DevBio>I'm a full-stack developer focused in JS. Always studying to increase my programming skills and very excited about new challenges</DevBio>
-              <DevTechs>ReactJS, React Native, Node.js</DevTechs>
-            </CalloutView>
-          </Callout>
-        </Marker>
+      <Map 
+        onRegionChangeComplete={handleRegionChanged} 
+        initialRegion={currentRegion}
+      >
+        {devs.map(dev => (
+          <Marker 
+            key={dev._id} 
+            coordinate={{ 
+              latitude: dev.location.coordinates[1], 
+              longitude: dev.location.coordinates[0],
+            }}
+          >
+            <ImageAvatar source={{ uri: dev.avatar_url }}/>
+            
+            <Callout onPress={() => {
+              navigation.navigate('Profile', { github_username: dev.github_username });
+            }}>
+              <CalloutView>
+                <DevName>{dev.name}</DevName>
+                <DevBio>{dev.bio}</DevBio>
+                <DevTechs>{dev.techs.join(', ')}</DevTechs>
+              </CalloutView>
+            </Callout>
+          </Marker>
+        ))}
       </Map>
       <SearchForm>
         <TechsInput 
@@ -68,9 +106,11 @@ export default function Main({ navigation }) {
           autoCapitalize="words"
           autoCorrect={false}
           style={{ elevation: 4 }}
+          value={techs}
+          onChangeText={setTechs}
         />
 
-        <SearchButton onPress={() => {}}>
+        <SearchButton onPress={loadDevs}>
           <MaterialIcons name="my-location" size={20} color="#FFF" />
         </SearchButton>
       </SearchForm>
