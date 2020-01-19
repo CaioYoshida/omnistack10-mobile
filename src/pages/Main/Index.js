@@ -4,6 +4,7 @@ import { Marker, Callout } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import api from '../../services/api';
+import { connect, disconnect } from '../../services/socket';
 
 import { 
   Map, 
@@ -44,6 +45,16 @@ export default function Main({ navigation }) {
     loadInitialPosition();
   }, [])
 
+  function setupWebsocket() {
+    const { latitude, longitude } = currentRegion;
+
+    connect(
+      latitude,
+      longitude,
+      techs,
+    );
+  }
+
   async function loadDevs() {
     console.log('entrou loadDevs');
 
@@ -55,11 +66,12 @@ export default function Main({ navigation }) {
         longitude: longitude,
         techs: 'ReactJS'
       }
-    })
+    });
 
     console.log(response.data);
 
-    setDevs(response.data)
+    setDevs(response.data);
+    setupWebsocket();
   }
 
   async function handleRegionChanged(region) {
