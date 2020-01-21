@@ -5,6 +5,10 @@ const socket = socketio(AXIOS_URL, {
   autoConnect: false,
 });
 
+function subscribeToNewDevs(subscribeFunction) {
+  socket.on('new-dev', subscribeFunction);
+}
+
 function connect(latitude, longitude, techs) {
   socket.io.opts.query = {
     latitude,
@@ -24,4 +28,5 @@ function disconnect() {
 export {
   connect,
   disconnect,
+  subscribeToNewDevs,
 }
